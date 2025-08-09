@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart City Dashboard</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <link rel="stylesheet" href="/styles/homeStyle.css">
+</head>
+<body>
+    <div class="header">Smart City Dashboard - Welcome, User!</div>
+    <div class="container-fluid">
+        <div class="side-nav">
+            <ul>
+                <li><a href="#home" class="active" aria-current="page">Home</a></li>
+                <li><a href="#traffic">Traffic Details</a></li>
+                <li><a href="#pollution">Pollution Details</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#emergency">Emergency Live Updates</a></li>
+                <li><a href="logout.html" id="logout">Logout</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <section id="home">
+                <h2>Home</h2>
+                <p>Welcome to the Smart City Dashboard! Monitor real-time data for Hyderabad and other cities, including traffic conditions, pollution levels, events, and emergency alerts.</p>
+                <div class="stats-card">
+                    <h3>City Overview (Hyderabad)</h3>
+                    <ul>
+                        <li><strong>Population:</strong></li>
+                        <li><strong>Traffic Incidents Today:</strong> </li>
+                        <li><strong>Active Emergency Alerts:</strong> </li>
+                        <li><strong>Air Quality Index:</strong></li>
+                    </ul>
+                </div>
+                <div class="stats-card">
+                    <h3>Dashboard Features</h3>
+                    <ul>
+                        <li><strong>Traffic Details:</strong> View city maps and traffic updates.</li>
+                        <li><strong>Pollution Details:</strong> Check air quality and pollution levels.</li>
+                        <li><strong>Events:</strong> Stay informed about upcoming city events.</li>
+                        <li><strong>Emergency Live Updates:</strong> Receive real-time alerts for emergencies.</li>
+                    </ul>
+                </div>
+            </section>
+            <section id="traffic" style="display: none;">
+                <h2>Traffic Details</h2>
+                <p>Enter a city to view its map.</p>
+                <div class="input-group">
+                    <label for="city" class="form-label">City: </label>
+                    <input type="text" id="city" class="form-control" placeholder="Enter city (e.g., Hyderabad)">
+                    <button class="btn btn-primary" onclick="showTraffic()">Show Traffic</button>
+                </div>
+                <div id="traffic-map"></div>
+            </section>
+            <section id="pollution" style="display: none;">
+                <h2>Pollution Details</h2>
+                <p>Pollution levels and air quality information.</p>
+            </section>
+            <section id="events" style="display: none;">
+                <h2>Events</h2>
+                <p>Upcoming city events and notifications.</p>
+            </section>
+            <section id="emergency" style="display: none;">
+                <h2>Emergency Live Updates</h2>
+                <p>Enter a city to view real-time emergency alerts.</p>
+                <div class="input-group">
+                    <label for="alerts-city" class="form-label">City: </label>
+                    <input type="text" id="alerts-city" class="form-control" placeholder="Enter city (e.g., Hyderabad)">
+                    <button class="btn btn-primary" onclick="showAlerts()">Show Alerts</button>
+                </div>
+                <ul id="alerts-list"></ul>
+                <p id="alerts-error" style="color: red; display: none;">Failed to load alerts. Please check the API key or CORS proxy.</p>
+            </section>
+        </div>
+    </div>
+    <!-- Bootstrap JS and Popper.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Custom JavaScript -->
+    <script>
+        let map;
+        const orsApiKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjRlMjI5ZmU0MjZjZjQ3YTE4YzJiMTRhNzdjYWM0MjZjIiwiaCI6Im11cm11cjY0In0=";
+        const weatherApiKey = "70f8d5a06af24da0a1255240250708";
+
+        // Geocode city using OpenRouteService
+        async function getCoords(city) {
+            const res = await fetch(`https://api.openrouteservice.org/geocode/search?api_key=${orsApiKey}&text=${encodeURIComponent(city)}`);
+            const data = await res.json();
+            if (data.features && data.features.length > 0) {
+                return data.features[0].geometry.coordinates; // [lon, lat]
+            }
+            throw new Error(`City not found: ${city}`);
+        }
+
+        // Show city map in Traffic Details
+        async function showTraffic() {
+            const city = document.getElementById('city').value;
+            if (!city) {
+                alert("Please enter a city");
+                return;
+            }
+
+            try {
+                const coords = await getCoords(city);
+                const [lon, lat] = coords;
+
+                // Initialize map
+                if (map) map.remove();
+                map = L.map('traffic-map').setView([lat, lon], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+                L.marker([lat, lon]).addTo(map).bindPopup(city).openPopup();
+            } catch (err) {
+                alert(err.message);
+                console.error(err);
+            }
+        }
+
+        // Fetch alerts via CORS proxy
+        async function fetchAlerts() {
+            const city = document.getElementById('alerts-city').value;
+            if (!city) {
+                alert("Please enter a city");
+                return [];
+            }
+            const url = `https://cors-anywhere.herokuapp.com/http://api.weatherapi.com/v1/alerts.json?key=${weatherApiKey}&q=${encodeURIComponent(city)}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message || 'Failed to fetch alerts');
+                return data.alerts?.alert || [];
+            } catch (error) {
+                document.getElementById('alerts-error').style.display = 'block';
+                console.error('Error fetching alerts:', error);
+                return [];
+            }
+        }
+
+        // Show alerts in Emergency Live Updates
+        async function showAlerts() {
+            const city = document.getElementById('alerts-city').value;
+            if (!city) {
+                alert("Please enter a city");
+                return;
+            }
+
+            try {
+                document.getElementById('alerts-error').style.display = 'none';
+                const alerts = await fetchAlerts();
+                const alertsList = document.getElementById('alerts-list');
+                alertsList.innerHTML = '';
+                if (alerts.length > 0) {
+                    alerts.forEach(alert => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${alert.headline}</strong>`;
+                        alertsList.appendChild(li);
+                    });
+                } else {
+                    alertsList.innerHTML = '<li>No alerts found for this city.</li>';
+                }
+            } catch (err) {
+                alert(err.message);
+                console.error(err);
+            }
+        }
+
+        // Sidebar navigation
+        document.querySelectorAll('.side-nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.querySelectorAll('.content section').forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    document.getElementById(targetId).style.display = 'block';
+                    document.querySelectorAll('.side-nav a').forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                    if (targetId === 'traffic') {
+                        document.getElementById('city').value = ''; // Clear traffic input
+                        if (map) map.remove(); // Clear map
+                    } else if (targetId === 'emergency') {
+                        document.getElementById('alerts-city').value = ''; // Clear alerts input
+                        document.getElementById('alerts-list').innerHTML = ''; // Clear alerts list
+                        document.getElementById('alerts-error').style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        // Logout confirmation
+        document.getElementById('logout').addEventListener('click', function(e) {
+            if (!confirm('Are you sure you want to logout?')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+        body {
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .container-fluid {
+            display: flex;
+            height: calc(100vh - 60px);
+            margin: 0;
+        }
+        .side-nav {
+            background-color: #34495e;
+            color: white;
+            width: 250px;
+            padding: 1rem;
+            height: 100%;
+            margin: 0;
+            border-right: 1px solid #2c3e50;
+        }
+        .side-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .side-nav li {
+            margin-bottom: 1rem;
+        }
+        .side-nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+            padding: 0.75rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .side-nav a:hover {
+            background-color: #2980b9;
+        }
+        .side-nav a.active {
+            background-color: #3498db;
+            font-weight: bold;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 15px 0 0 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin: 1rem 1rem 1rem 0;
+            overflow: hidden;
+        }
+        .content h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .content p {
+            color: #7f8c8d;
+        }
+        #traffic-map {
+            height: calc(50vh - 30px); /* Half page height minus header and padding */
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+        #alerts-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: calc(50vh - 30px); /* Match map height */
+            overflow: hidden;
+        }
+        #alerts-list li {
+            background: #f8f9fa;
+            margin-bottom: 0.5rem;
+            padding: 1rem;
+            border-radius: 5px;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        .stats-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .stats-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .stats-card li {
+            margin-bottom: 0.5rem;
+        }

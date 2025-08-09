@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles/login_register.css">
+</head>
+<body>
+         <nav>
+        <div>
+            <h1 class="logo">Smart City Dashboard</h1>
+        </div>
+        <div class="nav-buttons">
+            <button class="buttonN textbtn"><a href="./login.html">Login</a></button>
+            <button class="buttonN textbtn"><a href="./register.html">Register</a></button>
+        </div>   
+    </nav>
+    <div class="login">
+        <div class="container">
+            <div class="card p-4">
+                <h1 class="text-center mb-3" style="font-size: 2.5rem;">Registration</h1>
+                <h2 class="text-center mb-4" style="font-size: 1.8rem; color:cadetblue; font-weight: bold;"><i>Smart City Dashboard</i></h2>
+                <form>
+                    <div class="form-group mb-4">
+                        <label for="Name" class="form-label" style="font-size: 1.5rem; display: block; ">Name</label>
+                        <input type="Name" class="form-control" id="Name" placeholder="Enter your name" required style="font-size: 1.2rem;">
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="email" class="form-label" style="font-size: 1.5rem; display: block; ">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required style="font-size: 1.2rem;">
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="contact" class="form-label" style="font-size: 1.5rem; display: block; ">Contact</label>
+                        <input type="number" class="form-control" id="contact" placeholder="Enter your contact" required max="10"  style="font-size: 1.2rem;">
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="password" class="form-label" style="font-size: 1.5rem; display: block; ">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required minlength="8" style="font-size: 1.2rem;">
+                    </div>
+                     
+                    <button type="submit" class="btn btn-primary w-100 " style="font-size: 1.2rem;"><a href="./login.html" style="color: white; text-decoration: none;">Register</a></button>
+                </form>
+                <p class="text-center mt-3" style="font-size: 1 rem;">Already have an account? <a href="./login.html" class="link">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+</body>
+</html>
